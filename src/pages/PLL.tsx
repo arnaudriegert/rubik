@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { pllCategories } from '../data/pllCases'
 import CategoryNav from '../components/CategoryNav'
+import ColorRemote from '../components/ColorRemote'
+import { Color } from '../types/cube'
 
 // Debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -22,8 +24,7 @@ function useDebounce<T>(value: T, delay: number): T {
 
 // Get all PLL case names for validation
 const allPLLNames = pllCategories.flatMap(cat =>
-  cat.cases.flatMap(entry => entry.map(c => c.name.toLowerCase()))
-)
+  cat.cases.flatMap(entry => entry.map(c => c.name.toLowerCase())))
 
 // Context type exported for child routes
 export interface PLLContextType {
@@ -32,6 +33,7 @@ export interface PLLContextType {
   setSearch: (value: string) => void
   clearSearch: () => void
   selectedCategory: string | null
+  selectedColor: Color
 }
 
 export default function PLL() {
@@ -39,6 +41,7 @@ export default function PLL() {
   const [searchValue, setSearchValue] = useState('')
   const [instantValue, setInstantValue] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedColor, setSelectedColor] = useState<Color>(Color.BLUE)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const debouncedFromInput = useDebounce(searchValue, 500)
@@ -110,6 +113,7 @@ export default function PLL() {
     setSearch: setSearchImmediate,
     clearSearch,
     selectedCategory,
+    selectedColor,
   }
 
   return (
@@ -176,6 +180,12 @@ export default function PLL() {
 
       {/* Child route content */}
       <Outlet context={outletContext} />
+
+      {/* Floating color remote */}
+      <ColorRemote
+        selectedColor={selectedColor}
+        onColorSelect={setSelectedColor}
+      />
     </div>
   )
 }

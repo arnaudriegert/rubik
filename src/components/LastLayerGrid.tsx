@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Color, LastLayerColors, TopFaceColors, SideRowColors } from '../types/cube'
+import { colorToTailwind } from '../utils/colors'
 
 // Tailwind classes must be complete strings for JIT compilation
 type GridSize = 'normal' | 'medium' | 'compact'
@@ -20,16 +21,6 @@ const SIDE_STICKER_VERTICAL_SIZES: Record<GridSize, string> = {
   compact: 'w-2 h-4',
 }
 const STICKER_SPACING = 'gap-[2px] p-[2px]'
-
-const colorToTailwind: Record<Color, string> = {
-  [Color.WHITE]: 'bg-white',
-  [Color.YELLOW]: 'bg-yellow-400',
-  [Color.RED]: 'bg-red-600',
-  [Color.ORANGE]: 'bg-orange-500',
-  [Color.BLUE]: 'bg-blue-600',
-  [Color.GREEN]: 'bg-green-600',
-  [Color.GRAY]: 'bg-gray-500',
-}
 
 // Border radius classes for top face stickers (CSS grid positions 0-8)
 const topFaceBorderRadius: Record<number, string> = {

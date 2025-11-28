@@ -2,67 +2,13 @@ import AlgorithmText from '../components/AlgorithmText'
 import IsometricCube from '../components/IsometricCube'
 import { Color, TopFaceColors } from '../types/cube'
 import { solidFace, f2lFace } from '../utils/cubeHelpers'
+import { getColorRotations } from '../utils/colors'
 
-// Standard color scheme (yellow on top, viewed from front):
-// Left=Blue, Front=Red, Right=Green, Back=Orange
-// When we rotate the cube, these relationships shift
-
-// Color pairs for showing all 4 orientations of a pattern
-// For RIGHT slot view (front+right visible): blue-red first
-const colorRotationsRight = [
-  {
-    front: Color.BLUE,
-    right: Color.RED,
-    back: Color.GREEN,
-    left: Color.ORANGE,
-  },
-  {
-    front: Color.RED,
-    right: Color.GREEN,
-    back: Color.ORANGE,
-    left: Color.BLUE,
-  },
-  {
-    front: Color.GREEN,
-    right: Color.ORANGE,
-    back: Color.BLUE,
-    left: Color.RED,
-  },
-  {
-    front: Color.ORANGE,
-    right: Color.BLUE,
-    back: Color.RED,
-    left: Color.GREEN,
-  },
-]
-
-// For LEFT slot view (front+left visible): red-blue first (so blue+red are visible)
-const colorRotationsLeft = [
-  {
-    front: Color.RED,
-    right: Color.GREEN,
-    back: Color.ORANGE,
-    left: Color.BLUE,
-  },
-  {
-    front: Color.GREEN,
-    right: Color.ORANGE,
-    back: Color.BLUE,
-    left: Color.RED,
-  },
-  {
-    front: Color.ORANGE,
-    right: Color.BLUE,
-    back: Color.RED,
-    left: Color.GREEN,
-  },
-  {
-    front: Color.BLUE,
-    right: Color.RED,
-    back: Color.GREEN,
-    left: Color.ORANGE,
-  },
-]
+// Color rotations for showing all 4 orientations of a pattern
+// For RIGHT slot view (front+right visible): start with blue-front
+const colorRotationsRight = getColorRotations(Color.BLUE)
+// For LEFT slot view (front+left visible): start with red-front (so blue+red are visible)
+const colorRotationsLeft = getColorRotations(Color.RED)
 
 // Helper to create a face with specific stickers highlighted
 function makeFace(

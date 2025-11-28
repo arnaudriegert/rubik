@@ -5,6 +5,7 @@ export type PLLSideColors = [Color, Color, Color]
 
 export interface PLLCase {
   name: string
+  referenceColor: Color  // The characteristic color for this case (solved bar or headlights)
   sideColors: {
     back: PLLSideColors
     left: PLLSideColors
@@ -49,6 +50,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Ua',
+          referenceColor: R,  // Front solved bar
           sideColors: {
             back: [O, B, O],   // Headlights, has Right's edge (blue)
             left: [G, O, G],   // Headlights, has Back's edge (orange)
@@ -63,6 +65,7 @@ export const pllCategories: PLLCategory[] = [
         },
         {
           name: 'Ub',
+          referenceColor: R,  // Front solved bar
           sideColors: {
             back: [O, G, O],   // Headlights, has Left's edge (green)
             left: [G, B, G],   // Headlights, has Right's edge (blue)
@@ -80,6 +83,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'H',
+          referenceColor: R,  // Front headlights
           sideColors: {
             back: [O, R, O],   // Headlights, has Front's edge
             left: [G, B, G],   // Headlights, has Right's edge
@@ -95,6 +99,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Z',
+          referenceColor: R,  // Front headlights
           sideColors: {
             back: [O, G, O],   // Headlights, has Left's edge
             left: [G, O, G],   // Headlights, has Back's edge
@@ -119,6 +124,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Aa',
+          referenceColor: G,  // Left has 2 correct
           sideColors: {
             // BL corner goes to BR position, BR goes to FR, FR goes to BL
             back: [G, O, B],   // Left corner from Left face, right corner from Right face
@@ -134,6 +140,7 @@ export const pllCategories: PLLCategory[] = [
         },
         {
           name: 'Ab',
+          referenceColor: B,  // Right has 2 correct
           sideColors: {
             // BL corner goes to FL, FL goes to FR, FR goes to BL
             back: [B, O, O],   // Left corner from Right face, right corner correct
@@ -153,6 +160,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'E',
+          referenceColor: R,  // No clear bar, use front
           sideColors: {
             // Each side has opposite corners swapped
             back: [B, O, G],   // Left from Right, right from Left
@@ -176,6 +184,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'T',
+          referenceColor: B,  // Right solved bar
           sideColors: {
             back: [G, R, B],   // Corners swapped, edge from front
             left: [O, G, O],   // Headlights, edge from back
@@ -193,6 +202,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'F',
+          referenceColor: R,  // Front headlights
           sideColors: {
             back: [O, O, R],   // Right corner from front
             left: [G, R, G],   // Headlights, edge from front
@@ -211,6 +221,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Ja',
+          referenceColor: O,  // Back solved bar
           sideColors: {
             back: [O, O, O],   // Solved bar
             left: [B, G, G],   // Right sticker correct
@@ -225,6 +236,7 @@ export const pllCategories: PLLCategory[] = [
         },
         {
           name: 'Jb',
+          referenceColor: O,  // Back solved bar
           sideColors: {
             back: [O, O, O],   // Solved bar
             left: [G, G, B],   // Left sticker correct
@@ -242,6 +254,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Ra',
+          referenceColor: R,  // Front headlights
           sideColors: {
             back: [O, R, O],   // Headlights, edge from front
             left: [G, G, B],   // Left correct, right from right
@@ -256,6 +269,7 @@ export const pllCategories: PLLCategory[] = [
         },
         {
           name: 'Rb',
+          referenceColor: R,  // Front headlights
           sideColors: {
             back: [O, R, O],   // Headlights, edge from front
             left: [B, G, G],   // Left from right, right correct
@@ -280,6 +294,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Y',
+          referenceColor: R,  // Front has 2 correct
           sideColors: {
             back: [G, O, R],   // Left from left, right from front
             left: [B, G, O],   // Left from right, right from back
@@ -297,6 +312,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'V',
+          referenceColor: R,  // Front has 2 correct
           sideColors: {
             back: [G, B, R],   // Left from left, edge from right, right from front
             left: [B, G, O],   // Left from right, right from back
@@ -315,6 +331,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Na',
+          referenceColor: R,  // Front has 2 correct
           sideColors: {
             back: [R, O, G],   // Left from front, right from left
             left: [O, B, O],   // Headlights, edge from right
@@ -329,6 +346,7 @@ export const pllCategories: PLLCategory[] = [
         },
         {
           name: 'Nb',
+          referenceColor: B,  // Right solved bar
           sideColors: {
             back: [G, O, R],   // Left from left, right from front
             left: [O, G, O],   // Headlights, edge from right (swapped)
@@ -353,6 +371,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Ga',
+          referenceColor: G,  // Left headlights
           sideColors: {
             back: [G, O, R],   // Mixed colors
             left: [O, G, O],   // Headlights
@@ -367,6 +386,7 @@ export const pllCategories: PLLCategory[] = [
         },
         {
           name: 'Gb',
+          referenceColor: G,  // Left headlights
           sideColors: {
             back: [R, O, G],   // Mixed colors
             left: [O, G, O],   // Headlights
@@ -385,6 +405,7 @@ export const pllCategories: PLLCategory[] = [
       [
         {
           name: 'Gc',
+          referenceColor: O,  // Back solved bar
           sideColors: {
             back: [O, O, O],   // Solved bar (headlights + edge)
             left: [R, G, B],   // All different
@@ -399,6 +420,7 @@ export const pllCategories: PLLCategory[] = [
         },
         {
           name: 'Gd',
+          referenceColor: O,  // Back solved bar
           sideColors: {
             back: [O, O, O],   // Solved bar
             left: [B, G, R],   // All different

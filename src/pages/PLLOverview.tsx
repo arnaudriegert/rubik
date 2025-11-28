@@ -4,6 +4,7 @@ import { pllCategories, PLLCase } from '../data/pllCases'
 import { PLLContextType } from './PLL'
 import PLLGrid from '../components/PLLGrid'
 import AlgorithmText from '../components/AlgorithmText'
+import { Color } from '../types/cube'
 
 // Build a map from case name to category name
 const categoryByCase = new Map<string, string>()
@@ -31,6 +32,7 @@ interface CompactCardProps {
   isExpanded: boolean
   onSelect: (pllName: string) => void
   onDeselect: () => void
+  selectedColor: Color
 }
 
 const CompactCard = memo(function CompactCard({
@@ -38,6 +40,7 @@ const CompactCard = memo(function CompactCard({
   isExpanded,
   onSelect,
   onDeselect,
+  selectedColor,
 }: CompactCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
 
@@ -87,7 +90,7 @@ const CompactCard = memo(function CompactCard({
             {pllCase.name}
           </h3>
           <div className="mb-6">
-            <PLLGrid pllCase={pllCase} />
+            <PLLGrid pllCase={pllCase} selectedColor={selectedColor} />
           </div>
           <div className="w-full space-y-2">
             {pllCase.algorithms.map((algorithm, i) => {
@@ -107,7 +110,7 @@ const CompactCard = memo(function CompactCard({
         </div>
       ) : (
         <div className="flex flex-col items-center">
-          <PLLGrid pllCase={pllCase} size="compact" />
+          <PLLGrid pllCase={pllCase} size="compact" selectedColor={selectedColor} />
           <span className="mt-1 text-xs font-medium text-gray-600">
             {pllCase.name}
           </span>
@@ -123,6 +126,7 @@ export default function PLLOverview() {
     setSearch,
     clearSearch,
     selectedCategory,
+    selectedColor,
   } = useOutletContext<PLLContextType>()
   const gridRef = useRef<HTMLDivElement>(null)
 
@@ -186,6 +190,7 @@ export default function PLLOverview() {
             isExpanded={expandedCase === pllCase.name}
             onSelect={handleSelect}
             onDeselect={clearSearch}
+            selectedColor={selectedColor}
           />
         ))}
       </div>

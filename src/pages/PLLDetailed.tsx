@@ -4,12 +4,14 @@ import { pllCategories, PLLCase } from '../data/pllCases'
 import { PLLContextType } from './PLL'
 import PLLGrid from '../components/PLLGrid'
 import AlgorithmText from '../components/AlgorithmText'
+import { Color } from '../types/cube'
 
 function PLLCaseCard({
-  pllCase, isHighlighted,
+  pllCase, isHighlighted, selectedColor,
 }: {
   pllCase: PLLCase
   isHighlighted?: boolean
+  selectedColor: Color
 }) {
   return (
     <div className={`group pll-case-card transition-all duration-300 ${isHighlighted ? 'ring-4 ring-blue-500 ring-offset-2 scale-[1.02]' : ''}`}>
@@ -19,7 +21,7 @@ function PLLCaseCard({
         </h3>
 
         <div className="mb-6">
-          <PLLGrid pllCase={pllCase} />
+          <PLLGrid pllCase={pllCase} selectedColor={selectedColor} />
         </div>
 
         <div className="w-full space-y-2">
@@ -46,6 +48,7 @@ export default function PLLDetailed() {
   const {
     highlightedPll,
     clearSearch,
+    selectedColor,
   } = useOutletContext<PLLContextType>()
 
   // Clear highlight when clicking outside cards (but not on nav/header/input)
@@ -94,8 +97,8 @@ export default function PLLDetailed() {
                     rendered.push(
                       <div key={entry[0].name} id={`pll-${entry[0].name.toLowerCase()}`} className="md:col-span-2">
                         <div id={`pll-${entry[1].name.toLowerCase()}`} className="border-2 border-blue-200 rounded-lg bg-blue-50/30 p-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <PLLCaseCard pllCase={entry[0]} isHighlighted={highlightedPll === entry[0].name.toLowerCase()} />
-                          <PLLCaseCard pllCase={entry[1]} isHighlighted={highlightedPll === entry[1].name.toLowerCase()} />
+                          <PLLCaseCard pllCase={entry[0]} isHighlighted={highlightedPll === entry[0].name.toLowerCase()} selectedColor={selectedColor} />
+                          <PLLCaseCard pllCase={entry[1]} isHighlighted={highlightedPll === entry[1].name.toLowerCase()} selectedColor={selectedColor} />
                         </div>
                       </div>,
                     )
@@ -103,7 +106,7 @@ export default function PLLDetailed() {
                   } else {
                     rendered.push(
                       <div key={entry[0].name} id={`pll-${entry[0].name.toLowerCase()}`}>
-                        <PLLCaseCard pllCase={entry[0]} isHighlighted={highlightedPll === entry[0].name.toLowerCase()} />
+                        <PLLCaseCard pllCase={entry[0]} isHighlighted={highlightedPll === entry[0].name.toLowerCase()} selectedColor={selectedColor} />
                       </div>,
                     )
                     position = (position + 1) % 2
