@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect x="0" y="0" width="32" height="32" rx="2" fill="#111827"/>
+
+  <!-- Row 0 -->
+  <rect x="1.5" y="1.5" width="9" height="9" rx="1" fill="#f97316"/>
+  <path d="M12.5,1.5 h7 q1,0 1,1 v5 q0,3 -3,3 h-3 q-3,0 -3,-3 v-5 q0,-1 1,-1 z" fill="#ffffff"/>
+  <rect x="21.5" y="1.5" width="9" height="9" rx="1" fill="#2563eb"/>
+
+  <!-- Row 1 -->
+  <path d="M2.5,11.5 h5 q3,0 3,3 v3 q0,3 -3,3 h-5 q-1,0 -1,-1 v-7 q0,-1 1,-1 z" fill="#16a34a"/>
+  <rect x="11.5" y="11.5" width="9" height="9" rx="3" fill="#facc15"/>
+  <path d="M24.5,11.5 h5 q1,0 1,1 v7 q0,1 -1,1 h-5 q-3,0 -3,-3 v-3 q0,-3 3,-3 z" fill="#dc2626"/>
+
+  <!-- Row 2 -->
+  <rect x="1.5" y="21.5" width="9" height="9" rx="1" fill="#dc2626"/>
+  <path d="M14.5,21.5 h3 q3,0 3,3 v5 q0,1 -1,1 h-7 q-1,0 -1,-1 v-5 q0,-3 3,-3 z" fill="#2563eb"/>
+  <rect x="21.5" y="21.5" width="9" height="9" rx="1" fill="#16a34a"/>
+</svg>

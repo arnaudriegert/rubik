@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
+import Logo from '../components/Logo'
 
 export default function Home() {
   return (
     <div className="page-bg">
       <header className="header-gradient text-center py-12">
+        <Logo className="size-20 mx-auto mb-4" />
         <h1 className="page-header-title-lg">
           CFOP Method Learning Guide
         </h1>
