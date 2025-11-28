@@ -192,7 +192,7 @@ export const pllCategories: PLLCategory[] = [
             front: [R, O, R],  // Headlights, edge from back
           },
           algorithms: [{
-            full: "R U R' U' R' F R² U' R' U' R U R' F'",
+            full: "(R U R' U') R' F R² U' R' U' R U R' F'",
             shorthand: "{sexy} R' F R² U' R' U' R U R' F'",
           }],
         },
@@ -210,9 +210,11 @@ export const pllCategories: PLLCategory[] = [
             front: [R, G, R],  // Headlights, edge from left
           },
           algorithms: [{
-            full: "R' U' F' R U R' U' R' F R² U' R' U' R U R' U R",
+            full: "R' U' F' (R U R' U') R' F R² U' R' U' (R U R' U) R",
+            shorthand: "R' U' F' {sexy} R' F R² U' R' U' (R U R' U) R",
           }, {
-            full: "R' U R U' R² F' U' F U R F R' F' R² U'",
+            full: "R' U R U' R² F' U' F U R (F R' F' R) R U'",
+            shorthand: "R' U R U' R² F' U' F U R {sledge}' R U'",
           }],
         },
       ],
@@ -244,7 +246,7 @@ export const pllCategories: PLLCategory[] = [
             front: [R, R, G],  // Left sticker correct, edge from right
           },
           algorithms: [{
-            full: "R U R' F' R U R' U' R' F R² U' R' U'",
+            full: "R U R' F' (R U R' U') R' F R² U' R' U'",
             shorthand: "R U R' F' {sexy} R' F R² U' R' U'",
           }],
         },
@@ -277,9 +279,11 @@ export const pllCategories: PLLCategory[] = [
             front: [R, O, R],  // Headlights, edge from back
           },
           algorithms: [{
-            full: "R' U² R U² R' F R U R' U' R' F' R² U'",
+            full: "R' U² R U² R' F (R U R' U') R' F' R² U'",
+            shorthand: "R' U² R U² R' F {sexy} R' F' R² U'",
           }, {
-            full: "R' U² R' D' R U' R' D R U R U' R' U' R U'",
+            full: "R' U² R' D' R U' R' D R (U R U' R') U' R U'",
+            shorthand: "R' U² R' D' R U' R' D R {sexy}' U' R U'",
           }],
         },
       ],
@@ -302,7 +306,7 @@ export const pllCategories: PLLCategory[] = [
             front: [R, R, B],  // Left correct, edge correct, right from right
           },
           algorithms: [{
-            full: "F R U' R' U' R U R' F' R U R' U' R' F R F'",
+            full: "F R U' R' U' R U R' F' (R U R' U') (R' F R F')",
             shorthand: "F R U' R' U' R U R' F' {sexy} {sledge}",
           }],
         },
@@ -339,7 +343,8 @@ export const pllCategories: PLLCategory[] = [
             front: [G, R, R],  // Left from back, right correct
           },
           algorithms: [{
-            full: "R U R' U R U R' F' R U R' U' R' F R² U' R' U² R U' R'",
+            full: "(R U R' U) R U R' F' (R U R' U') R' F R² U' R' U² R U' R'",
+            shorthand: "(R U R' U) R U R' F' {sexy} R' F R² U' R' U² R U' R'",
           }, {
             full: "L U' R U² L' U R' L U' R U² L' U R'",
           }],
@@ -356,7 +361,8 @@ export const pllCategories: PLLCategory[] = [
           algorithms: [{
             full: "R' U L' U² R U' L R' U L' U² R U' L",
           }, {
-            full: "R' U R U' R' F' U' F R U R' F R' F' R U' R",
+            full: "R' (U R U' R') F' U' F R U R' (F R' F' R) U' R",
+            shorthand: "R' {sexy}' F' U' F R U R' {sledge}' U' R",
           }],
         },
       ],
@@ -413,9 +419,10 @@ export const pllCategories: PLLCategory[] = [
             front: [B, R, G],  // All different
           },
           algorithms: [{
-            full: "R² U' R U' R U R' U R² U D' R U' R' D",
+            full: "R² U' R U' (R U R' U) R² U D' R U' R' D",
           }, {
-            full: "R² F² R U² R U² R' F R U R' U' R' F R²",
+            full: "R² F² R U² R U² R' F (R U R' U') R' F R²",
+            shorthand: "R² F² R U² R U² R' F {sexy} R' F R²",
           }],
         },
         {
@@ -428,9 +435,11 @@ export const pllCategories: PLLCategory[] = [
             front: [G, R, B],  // All different
           },
           algorithms: [{
-            full: "R U R' U' D R² U' R U' R' U R' U R² D'",
+            full: "(R U R' U') D R² U' R U' R' U R' U R² D'",
+            shorthand: "{sexy} D R² U' R U' R' U R' U R² D'",
           }, {
-            full: "R² F' R U R U' R' F' R U² R' U² R' F² R²",
+            full: "R² F' R (U R U' R') F' R U² R' U² R' F² R²",
+            shorthand: "R² F' R {sexy}' F' R U² R' U² R' F² R²",
           }],
         },
       ],
