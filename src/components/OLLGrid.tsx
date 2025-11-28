@@ -1,4 +1,4 @@
-import LastLayerGrid, { GridSize } from './LastLayerGrid'
+import { LastLayerGrid, GridSize } from './cube'
 import { ollToColors } from '../utils/ollToColors'
 import { OLLOrientations } from '../types/cube'
 

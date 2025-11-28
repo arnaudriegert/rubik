@@ -1,5 +1,5 @@
 import AlgorithmText from '../components/AlgorithmText'
-import IsometricCube from '../components/IsometricCube'
+import { IsometricCube } from '../components/cube'
 import { Color, TopFaceColors } from '../types/cube'
 import { solidFace, f2lFace } from '../utils/cubeHelpers'
 import { getColorRotations } from '../utils/colors'

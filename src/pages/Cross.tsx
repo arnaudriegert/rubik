@@ -1,4 +1,4 @@
-import IsometricCube from '../components/IsometricCube'
+import { IsometricCube } from '../components/cube'
 import { Color, TopFaceColors } from '../types/cube'
 import { crossFace } from '../utils/cubeHelpers'
 

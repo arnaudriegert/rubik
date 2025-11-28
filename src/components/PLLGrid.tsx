@@ -1,4 +1,4 @@
-import LastLayerGrid, { GridSize } from './LastLayerGrid'
+import { LastLayerGrid, GridSize } from './cube'
 import { pllToColors } from '../utils/pllToColors'
 import { PLLCase } from '../data/pllCases'
 import { rotatePLLColors } from '../utils/rotateColors'
