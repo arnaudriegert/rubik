@@ -26,6 +26,28 @@
   @apply ring-2 ring-white ring-offset-2 ring-offset-gray-900 scale-110 opacity-100;
 }
 
+/* Toggle Switch (native checkbox) */
+.toggle-checkbox {
+  @apply appearance-none relative w-11 h-6 bg-gray-300 rounded-full transition-colors cursor-pointer;
+}
+
+.toggle-checkbox:checked {
+  @apply bg-indigo-600;
+}
+
+.toggle-checkbox::after {
+  content: '';
+  @apply absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform;
+}
+
+.toggle-checkbox:checked::after {
+  @apply translate-x-5;
+}
+
+.toggle-label {
+  @apply text-sm text-gray-600 cursor-pointer;
+}
+
 /* Algorithm Text Styling */
 .algo-strikethrough {
   @apply line-through opacity-50;

@@ -8,6 +8,7 @@ import OLLDetailed from './pages/OLLDetailed'
 import PLL from './pages/PLL'
 import PLLOverview from './pages/PLLOverview'
 import PLLDetailed from './pages/PLLDetailed'
+import Triggers from './pages/Triggers'
 import Sidebar from './components/Sidebar'
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
               <Route path="overview" element={<PLLOverview />} />
               <Route path="detailed" element={<PLLDetailed />} />
             </Route>
+            <Route path="/triggers" element={<Triggers />} />
           </Routes>
         </div>
       </div>

@@ -8,6 +8,10 @@ const navLinks = [
   { path: '/pll', label: '4. PLL' },
 ]
 
+const referenceLinks = [
+  { path: '/triggers', label: 'Triggers' },
+]
+
 type Props = {
   onLinkClick?: () => void
   showDivider?: boolean
@@ -38,6 +42,21 @@ export default function NavLinks({ onLinkClick, showDivider }: Props) {
             {link.label}
           </Link>
         </div>
+      ))}
+      {showDivider && (
+        <div className="mt-6 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider px-3">
+          Reference
+        </div>
+      )}
+      {referenceLinks.map((link) => (
+        <Link
+          key={link.path}
+          to={link.path}
+          onClick={onLinkClick}
+          className={isActive(link.path) ? 'sidebar-link-active' : 'sidebar-link'}
+        >
+          {link.label}
+        </Link>
       ))}
     </>
   )
