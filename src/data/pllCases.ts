@@ -3,9 +3,27 @@ import { Algorithm } from './ollCases'
 
 export type PLLSideColors = [Color, Color, Color]
 
+// Positions on the last layer grid
+// Corners: FL (front-left), FR (front-right), BL (back-left), BR (back-right)
+// Edges: F (front), R (right), B (back), L (left)
+export type CornerPosition = 'FL' | 'FR' | 'BL' | 'BR'
+export type EdgePosition = 'F' | 'R' | 'B' | 'L'
+
+// A cycle describes pieces that rotate through positions
+// 2 positions = swap, 3 positions = 3-cycle
+export interface Cycle {
+  positions: (CornerPosition | EdgePosition)[]
+  direction?: 'cw' | 'ccw'  // Visual hint for 3-cycles
+}
+
+export interface SwapInfo {
+  corners?: Cycle[]
+  edges?: Cycle[]
+  description: string
+}
+
 export interface PLLCase {
   name: string
-  referenceColor: Color  // The characteristic color for this case (solved bar or headlights)
   sideColors: {
     back: PLLSideColors
     left: PLLSideColors
@@ -13,6 +31,7 @@ export interface PLLCase {
     front: PLLSideColors
   }
   algorithms: Algorithm[]
+  swaps: SwapInfo
 }
 
 // Can be either a related pair of cases or a single case
@@ -24,16 +43,6 @@ export interface PLLCategory {
   cases: PLLEntry[]
 }
 
-// Standard color scheme for PLL visualization:
-// When looking at the cube with yellow on top:
-// - Front: RED face
-// - Right: BLUE face
-// - Back: ORANGE face
-// - Left: GREEN face
-//
-// Each side shows 3 stickers: [left-corner, edge, right-corner]
-// "Headlights" = matching corner colors on a face
-
 const R = Color.RED
 const O = Color.ORANGE
 const B = Color.BLUE
@@ -44,71 +53,90 @@ export const pllCategories: PLLCategory[] = [
     name: 'Edges Only',
     description: 'Only edges need to be permuted - all corners are solved. Look for 4 headlights.',
     cases: [
-      // Ua and Ub - 3-cycle of edges, front bar stays solved
-      // Ua: left headlights match right's center → L-based algo
-      // Ub: right headlights match left's center → R-based algo
       [
         {
           name: 'Ua',
-          referenceColor: R,  // Front solved bar
           sideColors: {
-            back: [O, B, O],   // Headlights, has Right's edge (blue)
-            left: [G, O, G],   // Headlights, has Back's edge (orange)
-            right: [B, G, B],  // Headlights, has Left's edge (green)
-            front: [R, R, R],  // Solved bar
+            back: [G, O, G],
+            left: [O, R, O],
+            right: [R, G, R],
+            front: [B, B, B],
           },
           algorithms: [{
             full: "L² (U L) (U L') (U' L') (U' L') (U L')",
           }, {
             full: "M² U' M' U² M U' M²",
           }],
+          swaps: {
+            edges: [{
+              positions: ['L', 'R', 'B'],
+              direction: 'cw',
+            }],
+            description: '3-cycle edges: L→R→B',
+          },
         },
         {
           name: 'Ub',
-          referenceColor: R,  // Front solved bar
           sideColors: {
-            back: [O, G, O],   // Headlights, has Left's edge (green)
-            left: [G, B, G],   // Headlights, has Right's edge (blue)
-            right: [B, O, B],  // Headlights, has Back's edge (orange)
-            front: [R, R, R],  // Solved bar
+            back: [G, R, G],
+            left: [O, G, O],
+            right: [R, O, R],
+            front: [B, B, B],
           },
           algorithms: [{
             full: "R² (U' R') (U' R) (U R) (U R) (U' R)",
           }, {
             full: "M² U M' U² M U M²",
           }],
+          swaps: {
+            edges: [{
+              positions: ['B', 'R', 'L'],
+              direction: 'ccw',
+            }],
+            description: '3-cycle edges: B→R→L',
+          },
         },
       ],
-      // H - swap opposite edge pairs (F↔B and L↔R)
       [
         {
           name: 'H',
-          referenceColor: R,  // Front headlights
           sideColors: {
-            back: [O, R, O],   // Headlights, has Front's edge
-            left: [G, B, G],   // Headlights, has Right's edge
-            right: [B, G, B],  // Headlights, has Left's edge
-            front: [R, O, R],  // Headlights, has Back's edge
+            back: [G, B, G],
+            left: [O, R, O],
+            right: [R, O, R],
+            front: [B, G, B],
           },
           algorithms: [{
             full: "M² U' M² U² M² U' M²",
           }],
+          swaps: {
+            edges: [
+              { positions: ['F', 'B'] },
+              { positions: ['L', 'R'] },
+            ],
+            description: 'Swap opposite edges: F↔B and L↔R',
+          },
         },
       ],
-      // Z - swap adjacent edge pairs (F↔R and B↔L)
       [
         {
           name: 'Z',
-          referenceColor: R,  // Front headlights
           sideColors: {
-            back: [O, G, O],   // Headlights, has Left's edge
-            left: [G, O, G],   // Headlights, has Back's edge
-            right: [B, R, B],  // Headlights, has Front's edge
-            front: [R, B, R],  // Headlights, has Right's edge
+            back: [G, O, G],
+            left: [O, G, O],
+            right: [R, B, R],
+            front: [B, R, B],
           },
           algorithms: [{
             full: "M' U' M² U' M² U' M' U² M²",
           }],
+          swaps: {
+            edges: [
+              { positions: ['F', 'R'] },
+              { positions: ['B', 'L'] },
+            ],
+            description: 'Swap adjacent edges: F↔R and B↔L',
+          },
         },
       ],
     ],
@@ -117,60 +145,65 @@ export const pllCategories: PLLCategory[] = [
     name: 'Corners Only',
     description: 'Only corners need to be permuted - all edges are solved.',
     cases: [
-      // Aa and Ab - 3-cycle of corners
-      // Looking at the cube from top: corners are at BL, BR, FR, FL
-      // Aa: cycles BL→BR→FR (counterclockwise), FL stays
-      // Ab: cycles BL→FL→FR (clockwise), BR stays
       [
         {
           name: 'Aa',
-          referenceColor: G,  // Left has 2 correct
           sideColors: {
-            // BL corner goes to BR position, BR goes to FR, FR goes to BL
-            back: [G, O, B],   // Left corner from Left face, right corner from Right face
-            left: [R, G, G],   // Left corner from Front face, right corner correct
-            right: [O, B, O],  // Left corner from Back face, right corner from Back face
-            front: [R, R, G],  // Left corner correct, right corner from Left face
+            back: [R, G, B],
+            left: [G, O, G],
+            right: [O, R, R],
+            front: [O, B, B],
           },
           algorithms: [{
-            full: "x R' U R' D² R U' R' D² R² x'",
-          }, {
-            full: "R' F R' B² R F' R' B² R²",
+            full: "L² B² L' F' L B² L' F L'",
           }],
+          swaps: {
+            corners: [{
+              positions: ['BR', 'FL', 'BL'],
+              direction: 'cw',
+            }],
+            description: '3-cycle corners: BR→FL→BL',
+          },
         },
         {
           name: 'Ab',
-          referenceColor: B,  // Right has 2 correct
           sideColors: {
-            // BL corner goes to FL, FL goes to FR, FR goes to BL
-            back: [B, O, O],   // Left corner from Right face, right corner correct
-            left: [G, G, R],   // Left corner correct, right corner from Front face
-            right: [G, B, B],  // Left corner from Left face, right corner correct
-            front: [O, R, R],  // Left corner from Back face, right corner correct
+            back: [B, G, O],
+            left: [R, O, O],
+            right: [G, R, G],
+            front: [B, B, R],
           },
           algorithms: [{
-            full: "x R² D² R U R' D² R U' R x'",
-          }, {
             full: "R² B² R F R' B² R F' R",
           }],
+          swaps: {
+            corners: [{
+              positions: ['BL', 'FR', 'BR'],
+              direction: 'ccw',
+            }],
+            description: '3-cycle corners: BL→FR→BR',
+          },
         },
       ],
-      // E perm - swap both diagonal corner pairs
-      // Swaps BL↔FR and BR↔FL
       [
         {
           name: 'E',
-          referenceColor: R,  // No clear bar, use front
           sideColors: {
-            // Each side has opposite corners swapped
-            back: [B, O, G],   // Left from Right, right from Left
-            left: [O, G, R],   // Left from Back, right from Front
-            right: [R, B, O],  // Left from Front, right from Back
-            front: [G, R, B],  // Left from Left, right from Right
+            back: [O, G, R],
+            left: [B, O, G],
+            right: [B, R, G],
+            front: [O, B, R],
           },
           algorithms: [{
-            full: "x' R U' R' D R U R' D' R U R' D R U' R' D' x",
+            full: "(r' U r F' r' U' r F) (r' U' r F' r' U r F)",
           }],
+          swaps: {
+            corners: [
+              { positions: ['BL', 'FL'] },
+              { positions: ['BR', 'FR'] },
+            ],
+            description: 'Swap left corners and right corners',
+          },
         },
       ],
     ],
@@ -179,112 +212,120 @@ export const pllCategories: PLLCategory[] = [
     name: 'Swap Adjacent Corners',
     description: 'Cases that swap two adjacent corners plus edges. Look for headlights to identify.',
     cases: [
-      // T perm: swaps UBL↔UBR corners, swaps UF↔UB edges
-      // Recognition: 2 opposite headlights (Front and Right), checker on Back/Left
       [
         {
           name: 'T',
-          referenceColor: B,  // Right solved bar
           sideColors: {
-            back: [G, R, B],   // Corners swapped, edge from front
-            left: [O, G, O],   // Headlights, edge from back
-            right: [B, B, B],  // Solved
-            front: [R, O, R],  // Headlights, edge from back
+            back: [G, G, R],
+            left: [O, R, O],
+            right: [B, O, G],
+            front: [B, B, R],
           },
           algorithms: [{
             full: "(R U R' U') R' F R² U' R' U' R U R' F'",
             shorthand: "{sexy} R' F R² U' R' U' R U R' F'",
           }],
+          swaps: {
+            corners: [{ positions: ['BR', 'FR'] }],
+            edges: [{ positions: ['L', 'R'] }],
+            description: 'Swap right corners, swap edges L↔R',
+          },
         },
       ],
-      // F perm: swaps UFR↔UBR corners, swaps UF↔UL edges
-      // Recognition: similar to T but different edge/corner configuration
       [
         {
           name: 'F',
-          referenceColor: R,  // Front headlights
           sideColors: {
-            back: [O, O, R],   // Right corner from front
-            left: [G, R, G],   // Headlights, edge from front
-            right: [O, B, B],  // Left corner from back
-            front: [R, G, R],  // Headlights, edge from left
+            back: [R, G, O],
+            left: [G, R, O],
+            right: [G, O, R],
+            front: [B, B, B],
           },
           algorithms: [{
-            full: "R' U' F' (R U R' U') R' F R² U' R' U' (R U R' U) R",
-            shorthand: "R' U' F' {sexy} R' F R² U' R' U' {half-sune} R",
-          }, {
-            full: "R' U R U' R² F' U' F U R (F R' F' R) R U'",
-            shorthand: "R' U R U' R² F' U' F U R {sledge}' R U'",
+            full: "R' U R U' R² F' U' F U R (F R' F' R) R",
+            shorthand: "R' U R U' R² F' U' F U R {sledge}' R",
           }],
+          swaps: {
+            corners: [{ positions: ['BL', 'BR'] }],
+            edges: [{ positions: ['R', 'L'] }],
+            description: 'Swap back corners, swap edges R↔L',
+          },
         },
       ],
-      // Ja and Jb: swap adjacent corners + 3-cycle edges
-      // Recognition: one solved bar (3 same colors), rest mixed
       [
         {
-          name: 'Ja',
-          referenceColor: O,  // Back solved bar
+          name: 'Ja/L',
           sideColors: {
-            back: [O, O, O],   // Solved bar
-            left: [B, G, G],   // Right sticker correct
-            right: [B, B, R],  // Left sticker correct, edge from front
-            front: [G, R, R],  // Right sticker correct, edge from left
+            back: [G, R, R],
+            left: [O, O, R],
+            right: [B, B, B],
+            front: [G, G, O],
           },
           algorithms: [{
-            full: "x R² F R F' R U² r' U r U² x'",
-          }, {
-            full: "R' U L' U² R U' R' U² R L U'",
+            full: "(L' U' L F) (L' U' L U) (L F' L') (L' U L)",
+            shorthand: "(L' U' L F) {left-sexy} (L F' L') (L' U L)",
           }],
+          swaps: {
+            corners: [{ positions: ['FL', 'BL'] }],
+            edges: [{ positions: ['F', 'L'] }],
+            description: 'Swap left corners, swap edges F↔L',
+          },
         },
         {
           name: 'Jb',
-          referenceColor: O,  // Back solved bar
           sideColors: {
-            back: [O, O, O],   // Solved bar
-            left: [G, G, B],   // Left sticker correct
-            right: [R, B, B],  // Right sticker correct, edge from front
-            front: [R, R, G],  // Left sticker correct, edge from right
+            back: [O, O, G],
+            left: [B, B, B],
+            right: [R, R, O],
+            front: [R, G, G],
           },
           algorithms: [{
-            full: "R U R' F' (R U R' U') R' F R² U' R' U'",
-            shorthand: "R U R' F' {sexy} R' F R² U' R' U'",
+            full: "(R U R' F') (R U R' U') (R' F R) (R U' R')",
+            shorthand: "(R U R' F') {sexy} (R' F R) (R U' R')",
           }],
+          swaps: {
+            corners: [{ positions: ['BR', 'FR'] }],
+            edges: [{ positions: ['F', 'R'] }],
+            description: 'Swap right corners, swap edges F↔R',
+          },
         },
       ],
-      // Ra and Rb: swap adjacent corners + swap 2 edges (opposite)
-      // Recognition: 2 opposite headlights with wrong edges between
       [
         {
           name: 'Ra',
-          referenceColor: R,  // Front headlights
           sideColors: {
-            back: [O, R, O],   // Headlights, edge from front
-            left: [G, G, B],   // Left correct, right from right
-            right: [G, B, B],  // Left from left, right correct
-            front: [R, O, R],  // Headlights, edge from back
+            back: [R, G, O],
+            left: [G, B, O],
+            right: [G, R, R],
+            front: [B, O, B],
           },
           algorithms: [{
-            full: "R U' R' U' R U R D R' U' R D' R' U² R' U'",
-          }, {
-            full: "R U R' F' R U² R' U² R' F R U R U² R' U'",
+            full: "L U² L' U² L F' (L' U' L U) L F L²",
+            shorthand: "L U² L' U² L F' {left-sexy} L F L²",
           }],
+          swaps: {
+            corners: [{ positions: ['BL', 'BR'] }],
+            edges: [{ positions: ['L', 'F'] }],
+            description: 'Swap back corners, swap edges L↔F',
+          },
         },
         {
           name: 'Rb',
-          referenceColor: R,  // Front headlights
           sideColors: {
-            back: [O, R, O],   // Headlights, edge from front
-            left: [B, G, G],   // Left from right, right correct
-            right: [B, B, G],  // Left correct, right from left
-            front: [R, O, R],  // Headlights, edge from back
+            back: [R, G, O],
+            left: [G, O, O],
+            right: [G, B, R],
+            front: [B, R, B],
           },
           algorithms: [{
-            full: "R' U² R U² R' F (R U R' U') R' F' R² U'",
-            shorthand: "R' U² R U² R' F {sexy} R' F' R² U'",
-          }, {
-            full: "R' U² R' D' R U' R' D R (U R U' R') U' R U'",
-            shorthand: "R' U² R' D' R U' R' D R {sexy}' U' R U'",
+            full: "R' U² R U² R' F (R U R' U') R' F' R²",
+            shorthand: "R' U² R U² R' F {sexy} R' F' R²",
           }],
+          swaps: {
+            corners: [{ positions: ['BL', 'BR'] }],
+            edges: [{ positions: ['R', 'F'] }],
+            description: 'Swap back corners, swap edges R↔F',
+          },
         },
       ],
     ],
@@ -293,77 +334,83 @@ export const pllCategories: PLLCategory[] = [
     name: 'Swap Diagonal Corners',
     description: 'Cases that swap two diagonal corners. Usually no headlights visible.',
     cases: [
-      // Y perm: swaps UFL↔UBR corners, swaps UF↔UL edges
-      // Recognition: no headlights, 3 colors visible on each side
       [
         {
           name: 'Y',
-          referenceColor: R,  // Front has 2 correct
           sideColors: {
-            back: [G, O, R],   // Left from left, right from front
-            left: [B, G, O],   // Left from right, right from back
-            right: [O, B, G],  // Left from back, right from left
-            front: [R, R, B],  // Left correct, edge correct, right from right
+            back: [B, O, G],
+            left: [R, G, O],
+            right: [R, R, O],
+            front: [B, B, G],
           },
           algorithms: [{
             full: "F R U' R' U' R U R' F' (R U R' U') (R' F R F')",
             shorthand: "F R U' R' U' R U R' F' {sexy} {sledge}",
           }],
+          swaps: {
+            corners: [{ positions: ['BL', 'FR'] }],
+            edges: [{ positions: ['L', 'B'] }],
+            description: 'Swap diagonal corners BL↔FR, swap edges L↔B',
+          },
         },
       ],
-      // V perm: swaps UFL↔UBR corners, swaps UB↔UR edges
-      // Recognition: no headlights, different pattern from Y
       [
         {
           name: 'V',
-          referenceColor: R,  // Front has 2 correct
           sideColors: {
-            back: [G, B, R],   // Left from left, edge from right, right from front
-            left: [B, G, O],   // Left from right, right from back
-            right: [O, O, G],  // Left from back, edge from back, right from left
-            front: [R, R, B],  // Left correct, right from right
+            back: [B, R, G],
+            left: [R, O, O],
+            right: [R, G, O],
+            front: [B, B, G],
           },
           algorithms: [{
             full: "R' U R' U' y R' F' R² U' R' U R' F R F",
           }, {
             full: "R' U R' d' R' F' R² U' R' U R' F R F",
           }],
+          swaps: {
+            corners: [{ positions: ['BL', 'FR'] }],
+            edges: [{ positions: ['R', 'B'] }],
+            description: 'Swap diagonal corners BL↔FR, swap edges R↔B',
+          },
         },
       ],
-      // Na and Nb: swap diagonal corners + swap diagonal edges (the "N" shape)
-      // Recognition: one solved bar, adjacent sides have 5-checker pattern
       [
         {
           name: 'Na',
-          referenceColor: R,  // Front has 2 correct
           sideColors: {
-            back: [R, O, G],   // Left from front, right from left
-            left: [O, B, O],   // Headlights, edge from right
-            right: [B, G, B],  // Headlights, edge from left
-            front: [G, R, R],  // Left from back, right correct
+            back: [G, G, B],
+            left: [O, R, R],
+            right: [O, O, R],
+            front: [G, B, B],
           },
           algorithms: [{
-            full: "(R U R' U) R U R' F' (R U R' U') R' F R² U' R' U² R U' R'",
-            shorthand: "{half-sune} R U R' F' {sexy} R' F R² U' R' U² R U' R'",
-          }, {
-            full: "L U' R U² L' U R' L U' R U² L' U R'",
+            full: "L (U' L' U L) (F U F') (L' U' L) (F' L F L') U L'",
+            shorthand: "L {left-sexy}' (F U F') (L' U' L) {left-sledge}' U L'",
           }],
+          swaps: {
+            corners: [{ positions: ['FL', 'BR'] }],
+            edges: [{ positions: ['L', 'R'] }],
+            description: 'Swap diagonal corners FL↔BR, swap edges L↔R',
+          },
         },
         {
           name: 'Nb',
-          referenceColor: B,  // Right solved bar
           sideColors: {
-            back: [G, O, R],   // Left from left, right from front
-            left: [O, G, O],   // Headlights, edge from right (swapped)
-            right: [B, B, B],  // Solved bar
-            front: [R, R, G],  // Left correct, right from back
+            back: [B, G, G],
+            left: [R, R, O],
+            right: [R, O, O],
+            front: [B, B, G],
           },
           algorithms: [{
-            full: "R' U L' U² R U' L R' U L' U² R U' L",
-          }, {
-            full: "R' (U R U' R') F' U' F R U R' (F R' F' R) U' R",
-            shorthand: "R' {sexy}' F' U' F R U R' {sledge}' U' R",
+            full: "R' (U R U' R') (F' U' F) (R U R') (F R' F' R) U' R",
+            shorthand: "R' {sexy}' (F' U' F) (R U R') {sledge}' U' R",
           }],
+          swaps: {
+            corners: [{ positions: ['BL', 'FR'] }],
+            edges: [{ positions: ['L', 'R'] }],
+            description: 'Swap diagonal corners BL↔FR, swap edges L↔R',
+          },
         },
       ],
     ],
@@ -372,76 +419,104 @@ export const pllCategories: PLLCategory[] = [
     name: 'G Permutations',
     description: 'Complex cases: 3-cycle of corners + 3-cycle of edges. Look for one headlight.',
     cases: [
-      // Ga and Gb: corner cycle + edge cycle in same direction
-      // Recognition: exactly one headlight, adjacent 2x1 block
       [
         {
           name: 'Ga',
-          referenceColor: G,  // Left headlights
           sideColors: {
-            back: [G, O, R],   // Mixed colors
-            left: [O, G, O],   // Headlights
-            right: [R, B, G],  // Mixed colors
-            front: [B, R, B],  // Headlights
+            back: [R, O, B],
+            left: [G, R, G],
+            right: [O, G, R],
+            front: [O, B, B],
           },
           algorithms: [{
-            full: "R² U R' U R' U' R U' R² U' D R' U R D'",
-          }, {
-            full: "R² u R' U R' U' R u' R² y' R' U R",
+            full: "L² F² L' U² L' U² L F' (L' U' L U) L F' L²",
+            shorthand: "L² F² L' U² L' U² L F' {left-sexy} L F' L²",
           }],
-        },
-        {
-          name: 'Gb',
-          referenceColor: G,  // Left headlights
-          sideColors: {
-            back: [R, O, G],   // Mixed colors
-            left: [O, G, O],   // Headlights
-            right: [G, B, R],  // Mixed colors
-            front: [B, R, B],  // Headlights
+          swaps: {
+            corners: [{
+              positions: ['FL', 'BL', 'BR'],
+              direction: 'cw',
+            }],
+            edges: [{
+              positions: ['L', 'R', 'B'],
+              direction: 'cw',
+            }],
+            description: '3-cycle corners FL→BL→BR, 3-cycle edges L→R→B',
           },
-          algorithms: [{
-            full: "R' U' R U D' R² U R' U R U' R U' R² D",
-          }, {
-            full: "F' U' F R² u R' U R U' R u' R²",
-          }],
         },
-      ],
-      // Gc and Gd: corner cycle + edge cycle in opposite directions
-      // Recognition: exactly one headlight, different block pattern
-      [
         {
           name: 'Gc',
-          referenceColor: O,  // Back solved bar
           sideColors: {
-            back: [O, O, O],   // Solved bar (headlights + edge)
-            left: [R, G, B],   // All different
-            right: [G, B, R],  // All different
-            front: [B, R, G],  // All different
+            back: [R, G, B],
+            left: [G, O, B],
+            right: [O, B, O],
+            front: [R, R, G],
           },
           algorithms: [{
-            full: "R² U' R U' (R U R' U) R² U D' R U' R' D",
-            shorthand: "R² U' R U' {half-sune} R² U D' R U' R' D",
-          }, {
             full: "R² F² R U² R U² R' F (R U R' U') R' F R²",
             shorthand: "R² F² R U² R U² R' F {sexy} R' F R²",
           }],
+          swaps: {
+            corners: [{
+              positions: ['FR', 'BR', 'BL'],
+              direction: 'cw',
+            }],
+            edges: [{
+              positions: ['L', 'B', 'R'],
+              direction: 'cw',
+            }],
+            description: '3-cycle corners FR→BR→BL, 3-cycle edges L→B→R',
+          },
+        },
+      ],
+      [
+        {
+          name: 'Gb',
+          sideColors: {
+            back: [O, R, O],
+            left: [B, G, R],
+            right: [G, O, R],
+            front: [G, B, B],
+          },
+          algorithms: [{
+            full: "L² F L' (U' L' U L) F L' U² L U² L F² L²",
+            shorthand: "L² F L' {left-sexy}' F L' U² L U² L F² L²",
+          }],
+          swaps: {
+            corners: [{
+              positions: ['FL', 'BR', 'BL'],
+              direction: 'ccw',
+            }],
+            edges: [{
+              positions: ['L', 'B', 'R'],
+              direction: 'ccw',
+            }],
+            description: '3-cycle corners FL→BR→BL, 3-cycle edges L→B→R',
+          },
         },
         {
           name: 'Gd',
-          referenceColor: O,  // Back solved bar
           sideColors: {
-            back: [O, O, O],   // Solved bar
-            left: [B, G, R],   // All different
-            right: [R, B, G],  // All different
-            front: [G, R, B],  // All different
+            back: [R, O, R],
+            left: [G, R, O],
+            right: [B, G, O],
+            front: [B, B, G],
           },
           algorithms: [{
-            full: "(R U R' U') D R² U' R U' R' U R' U R² D'",
-            shorthand: "{sexy} D R² U' R U' R' U R' U R² D'",
-          }, {
             full: "R² F' R (U R U' R') F' R U² R' U² R' F² R²",
             shorthand: "R² F' R {sexy}' F' R U² R' U² R' F² R²",
           }],
+          swaps: {
+            corners: [{
+              positions: ['FR', 'BL', 'BR'],
+              direction: 'ccw',
+            }],
+            edges: [{
+              positions: ['L', 'R', 'B'],
+              direction: 'ccw',
+            }],
+            description: '3-cycle corners FR→BL→BR, 3-cycle edges L→R→B',
+          },
         },
       ],
     ],

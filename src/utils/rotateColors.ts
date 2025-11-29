@@ -2,16 +2,19 @@ import { Color } from '../types/cube'
 import { PLLCase, PLLSideColors } from '../data/pllCases'
 import { SIDE_COLORS, isSideColor, getRotationSteps } from './colors'
 
+// All PLL cases are defined with blue as the reference (front) color
+const REFERENCE_COLOR = Color.BLUE
+
 export function rotatePLLColors(
   pllCase: PLLCase,
   targetFrontColor: Color,
 ): PLLCase['sideColors'] {
-  // If either color is not a side color, return original
-  if (!isSideColor(pllCase.referenceColor) || !isSideColor(targetFrontColor)) {
+  // If target is not a side color, return original
+  if (!isSideColor(targetFrontColor)) {
     return pllCase.sideColors
   }
 
-  const steps = getRotationSteps(pllCase.referenceColor, targetFrontColor)
+  const steps = getRotationSteps(REFERENCE_COLOR, targetFrontColor)
 
   // No rotation needed
   if (steps === 0) return pllCase.sideColors

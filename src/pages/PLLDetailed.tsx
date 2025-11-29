@@ -5,6 +5,32 @@ import { PLLContextType } from './PLL'
 import PLLGrid from '../components/PLLGrid'
 import AlgorithmBox from '../components/AlgorithmBox'
 import { Color } from '../types/cube'
+import { CORNER_COLOR, EDGE_COLOR } from '../components/PLLArrowOverlay'
+
+// Highlights "corner(s)" and "edge(s)" words with their respective colors
+function ColorCodedDescription({ text }: { text: string }) {
+  const parts = text.split(/(corners?|edges?)/gi)
+  return (
+    <>
+      {parts.map((part, i) => {
+        const lower = part.toLowerCase()
+        if (lower === 'corner' || lower === 'corners') {
+          return <span key={i} style={{
+            color: CORNER_COLOR,
+            fontWeight: 500,
+          }}>{part}</span>
+        }
+        if (lower === 'edge' || lower === 'edges') {
+          return <span key={i} style={{
+            color: EDGE_COLOR,
+            fontWeight: 500,
+          }}>{part}</span>
+        }
+        return <span key={i}>{part}</span>
+      })}
+    </>
+  )
+}
 
 function PLLCaseCard({
   pllCase, isHighlighted, selectedColor,
@@ -20,9 +46,15 @@ function PLLCaseCard({
           {pllCase.name}
         </h3>
 
-        <div className="mb-6">
-          <PLLGrid pllCase={pllCase} selectedColor={selectedColor} />
+        <div className="mb-4">
+          <PLLGrid pllCase={pllCase} selectedColor={selectedColor} showArrows />
         </div>
+
+        {pllCase.swaps && (
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">
+            <ColorCodedDescription text={pllCase.swaps.description} />
+          </p>
+        )}
 
         <div className="w-full space-y-2">
           {pllCase.algorithms.map((algorithm, i) => (
@@ -87,8 +119,16 @@ export default function PLLDetailed() {
                     rendered.push(
                       <div key={entry[0].name} id={`pll-${entry[0].name.toLowerCase()}`} className="md:col-span-2">
                         <div id={`pll-${entry[1].name.toLowerCase()}`} className="pair-container">
-                          <PLLCaseCard pllCase={entry[0]} isHighlighted={highlightedPll === entry[0].name.toLowerCase()} selectedColor={selectedColor} />
-                          <PLLCaseCard pllCase={entry[1]} isHighlighted={highlightedPll === entry[1].name.toLowerCase()} selectedColor={selectedColor} />
+                          <PLLCaseCard
+                            pllCase={entry[0]}
+                            isHighlighted={highlightedPll === entry[0].name.toLowerCase()}
+                            selectedColor={selectedColor}
+                          />
+                          <PLLCaseCard
+                            pllCase={entry[1]}
+                            isHighlighted={highlightedPll === entry[1].name.toLowerCase()}
+                            selectedColor={selectedColor}
+                          />
                         </div>
                       </div>,
                     )
@@ -96,7 +136,11 @@ export default function PLLDetailed() {
                   } else {
                     rendered.push(
                       <div key={entry[0].name} id={`pll-${entry[0].name.toLowerCase()}`}>
-                        <PLLCaseCard pllCase={entry[0]} isHighlighted={highlightedPll === entry[0].name.toLowerCase()} selectedColor={selectedColor} />
+                        <PLLCaseCard
+                          pllCase={entry[0]}
+                          isHighlighted={highlightedPll === entry[0].name.toLowerCase()}
+                          selectedColor={selectedColor}
+                        />
                       </div>,
                     )
                     position = (position + 1) % 2
