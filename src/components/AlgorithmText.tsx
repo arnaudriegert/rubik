@@ -1,4 +1,4 @@
-const ALGORITHM_REGEX = /(~[^~]+~|\*\*[^*]+\*\*|\[[^\]]+\]|\{[^}]+\})/g
+const ALGORITHM_REGEX = /(\([^)~]+\)|~[^~]+~|\*\*[^*]+\*\*|\[[^\]]+\]|\{[^}]+\})/g
 
 export default function AlgorithmText({ text }: { text: string }) {
   const parts = text.split(ALGORITHM_REGEX)
@@ -6,7 +6,9 @@ export default function AlgorithmText({ text }: { text: string }) {
   return (
     <>
       {parts.map((part, i) => {
-        if (part.match(/^~.+~$/)) {
+        if (part.match(/^\([^~]+\)$/)) {
+          return <span key={i} className="whitespace-nowrap">{part}</span>
+        } else if (part.match(/^~.+~$/)) {
           return (
             <span key={i} className="algo-strikethrough">
               {part.slice(1, -1)}
